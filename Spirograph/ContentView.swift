@@ -83,27 +83,21 @@ class Spirograph{
 }
 
 struct ContentView: View {
-    
-    @State var textValue: String = "hello"
-    @State var value: Float = 0
+    @State var arrayValues: [CGFloat] = []
     @State var sliderValue1: CGFloat = 0
     @State var sliderValue2: CGFloat = 1
     @State var strokeColor: Color = .blue
-    let array = [1, 2, 3, 4]
+  
     var body: some View {
-        
-        
-        //how to declare these as doubles?
-        //implicit type casting
-        //background colour
-        //stroke colour
-        //animation?
-        //use pencil to allow to draw on canvas like a real spirograph?
-        
         let spirograph = Spirograph()
         ZStack {
             VStack() {
-                Text("Spirograph - by Eski and Erin")
+              Text("Spirograph- SwiftUIJam 2021")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .padding(.bottom, 2)
+              Text("By Eski and Erin")
+                .font(.title)
                 Spacer()
             }
             
@@ -127,7 +121,6 @@ struct ContentView: View {
                 }
                 .stroke($strokeColor.wrappedValue, lineWidth: 1)
                 .frame(width: spirograph.frameWidth, height: spirograph.frameHeight, alignment: .center)
-//                .background(.green)
                 
                 VStack {
                     
@@ -144,7 +137,6 @@ struct ContentView: View {
                         }
                         
                 }
-//                .background(.green)
                 .padding()
             }
         }
