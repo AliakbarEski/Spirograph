@@ -7,26 +7,17 @@
 
 import SwiftUI
 
-struct CircleParams {
-    var radii: Double
-    var speed: Double
-}
-
-class Spirograph{
-    //    let screenHeight = UIScreen.main.bounds.height
-    //    let screenWidth = UIScreen.main.bounds.width
+class Spirograph {
     let frameWidth = 500.0
     let frameHeight = 500.0
     let w = 1
-    var cx = 0.0  //UIScreen.main.bounds.width/2.0
-    var cy = 0.0 //UIScreen.main.bounds.height/2.0
+    var cx = 0.0
+    var cy = 0.0
     var radiusMult = 1.0
     
-    var radii: [CGFloat] = [120, 40]
+    var radii: [CGFloat] = [120, 10]
     var mults: [CGFloat] = [1, 12]
-    
-    var cicleParams: [CircleParams] = []
-    
+        
     var startx = 0.0
     var starty = 0.0
     
@@ -44,22 +35,10 @@ class Spirograph{
         
         cx = frameWidth/2.0
         cy = frameHeight/2.0
-        startx = cx
-        starty = cy
-        for idx in 0..<radii.count {
-            startx += radii[idx] * radiusMult * sin(0)
-            starty += radii[idx] * radiusMult * cos(0)
-        }
-    }
-    
-    func getXYFrom(t: Binding<CGFloat>) -> CGPoint{
-        let value = t.wrappedValue
-        var point = CGPoint(x:cx, y:cy)
-        for idx in 0..<radii.count {
-            point.x += radii[idx] * radiusMult * sin((mults[idx] * CGFloat(w) * value)/100.0)
-            point.y += radii[idx] * radiusMult * cos((mults[idx] * CGFloat(w) * value)/100.0)
-        }
-        return point
+        
+        let startPoint: CGPoint = getXYFrom(t:0)
+        startx = startPoint.x
+        starty = startPoint.y
     }
     
     func getXYFrom(t: CGFloat) -> CGPoint{
@@ -77,33 +56,29 @@ class Spirograph{
     }
     
     func setMult(idx: Int, val: Binding<CGFloat>) {
-        mults[idx] = CGFloat(Int(val.wrappedValue))
+        mults[idx] = floor((val.wrappedValue * 100)/25) * 25 / 100
         calculateParams()
     }
 }
 
 struct ContentView: View {
     
-    @State var textValue: String = "hello"
     @State var value: Float = 0
-    @State var sliderValue1: CGFloat = 0
+    @State var sliderValue1: CGFloat = 1
     @State var sliderValue2: CGFloat = 1
     @State var strokeColor: Color = .blue
     let array = [1, 2, 3, 4]
     var body: some View {
         
-        
-        //how to declare these as doubles?
-        //implicit type casting
-        //background colour
-        //stroke colour
-        //animation?
-        //use pencil to allow to draw on canvas like a real spirograph?
-        
         let spirograph = Spirograph()
         ZStack {
             VStack() {
-                Text("Spirograph - by Eski and Erin")
+                Text("Spirograph- SwiftUIJam 2021")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .padding(.bottom, 2)
+                Text("By Eski and Erin")
+                    .font(.title)
                 Spacer()
             }
             
@@ -120,31 +95,31 @@ struct ContentView: View {
                         )
                     )
                     
-                    //step size?
                     for t in 0...3600{
                         path.addLine(to: spirograph.getXYFrom(t: CGFloat(t)))
                     }
                 }
                 .stroke($strokeColor.wrappedValue, lineWidth: 1)
                 .frame(width: spirograph.frameWidth, height: spirograph.frameHeight, alignment: .center)
-//                .background(.green)
                 
                 VStack {
-                    
                     ColorPicker ("Color of Drawer", selection: $strokeColor)
+                    HStack {
+                        Text("Radius Ratio: ")
+                        Slider(value: $sliderValue1, in: 1...100)
+                            .onChange(of: self.sliderValue1) { newValue in
+                                sliderValue1 = newValue
+                            }
+                    }
                     
-                    Slider(value: $sliderValue1, in: 0...100)
-                        .onChange(of: self.sliderValue1) { newValue in
-                            sliderValue1 = newValue
-                        }
-                        
-                    Slider(value: $sliderValue2, in: 1...30)
-                        .onChange(of: self.sliderValue2) { newValue in
-                            sliderValue2 = newValue
-                        }
-                        
+                    HStack {
+                        Text ("Multiplier: ")
+                        Slider(value: $sliderValue2, in: -10...10)
+                            .onChange(of: self.sliderValue2) { newValue in
+                                sliderValue2 = newValue
+                            }
+                    }
                 }
-//                .background(.green)
                 .padding()
             }
         }
